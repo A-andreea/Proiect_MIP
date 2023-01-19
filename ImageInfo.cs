@@ -12,18 +12,20 @@ namespace ProiectMIP
     {
         private int id;
         private String name;
-        private String description;
+       // private String description;
         private byte[] imageData;
         System.Drawing.Image image1;
 
 
-        public ImageInfo(int id,String name,String descripton,byte[] image)
+        public ImageInfo(String name)
         {
             this.id = id;
             this.name = name;
             //this.description= description;
-            //imageData = image;
+            
+           
             image1 = Image.FromFile(name);
+            imageData = imageToByteArray(image1);
         }
         public ImageInfo(int id,String name)
         {
@@ -31,25 +33,25 @@ namespace ProiectMIP
             this.name = name;
             image1 = Image.FromFile(name);
         }
-        public ImageInfo(String name)
-        {
+        //public ImageInfo(String name)
+        //{
             
-            this.name = name;
-            image1 = Image.FromFile(name);
-        }
+        //    this.name = name;
+        //    image1 = Image.FromFile(name);
+        //}
         public ImageInfo(String name,String descripton,byte[] image)
         {
            
             this.name = name;
             //this.description= description;
-            //imageData = image;
+            imageData = image;
             image1 = Image.FromFile(name);
         }
         public ImageInfo(String name,String descripton)
         {
            
             this.name = name;
-            this.description= description;
+          //  this.description= description;
            
         }
 
@@ -61,14 +63,14 @@ namespace ProiectMIP
         {
             this.name = name;
         }
-        public String getDescription()
-        {
-            return description;
-        }
-        public void setDescription(String description)
-        {
-            this.description = description;
-        }
+        //public String getDescription()
+        //{
+        //    return description;
+        //}
+        //public void setDescription(String description)
+        //{
+        //    this.description = description;
+        //}
         //public ImageInfo transform()
         public byte[] imageToByteArray(System.Drawing.Image imageIn)
         {

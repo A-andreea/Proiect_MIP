@@ -32,16 +32,7 @@ namespace ProiectMIP
 
             con = new SqlConnection(connectionString);
 
-            //try
-            //{
-            //    cnn.Open();
-            //    System.Windows.Forms.MessageBox.Show("Connection Open ! ");
-            //    //cnn.Close();
-            //}
-            //catch (Exception ex)
-            //{
-            //    System.Windows.Forms.MessageBox.Show("Can not open connection ! ");
-            //}
+          
         }
 
         public void OpenConection()
@@ -127,27 +118,35 @@ namespace ProiectMIP
                     tableFieldsString += ",";
             }
 
-            string fileName = blobPath.Substring(blobPath.LastIndexOf(@"\") + 1, blobPath.LastIndexOf(@".") - blobPath.LastIndexOf(@"\") - 1);
+            try
+            {
 
-            SqlCommand cmd = new SqlCommand("INSERT INTO " + tableName + " (" + tableFieldsString + ") VALUES (@fileName,@blobData)", con);
+                string fileName = blobPath.Substring(blobPath.LastIndexOf(@"\") + 1, blobPath.LastIndexOf(@".") - blobPath.LastIndexOf(@"\") - 1);
 
-            //Read jpg into file stream, and from there into Byte array.
-            FileStream fsBLOBFile = new FileStream(blobPath, FileMode.Open, FileAccess.Read);
-            Byte[] bytBLOBData = new Byte[fsBLOBFile.Length];
-            fsBLOBFile.Read(bytBLOBData, 0, bytBLOBData.Length);
-            fsBLOBFile.Close();
+                SqlCommand cmd = new SqlCommand("INSERT INTO " + tableName + " (" + tableFieldsString + ") VALUES (@fileName,@blobData)", con);
 
-            //Create parameter for insert command and add to SqlCommand object.
-            SqlParameter prm1 = new SqlParameter("@fileName", fileName);
-            SqlParameter prm2 = new SqlParameter("@blobData", SqlDbType.VarBinary, bytBLOBData.Length, ParameterDirection.Input, false,
-            0, 0, null, DataRowVersion.Current, bytBLOBData);
-            cmd.Parameters.Add(prm1);
-            cmd.Parameters.Add(prm2);
+                //Read jpg into file stream, and from there into Byte array.
+                FileStream fsBLOBFile = new FileStream(blobPath, FileMode.Open, FileAccess.Read);
+                Byte[] bytBLOBData = new Byte[fsBLOBFile.Length];
+                fsBLOBFile.Read(bytBLOBData, 0, bytBLOBData.Length);
+                fsBLOBFile.Close();
 
-            //Open connection, execute query, and close connection.
-            con.Open();
-            cmd.ExecuteNonQuery();
-            con.Close();
+                //Create parameter for insert command and add to SqlCommand object.
+                SqlParameter prm1 = new SqlParameter("@fileName", fileName);
+                SqlParameter prm2 = new SqlParameter("@blobData", SqlDbType.VarBinary, bytBLOBData.Length, ParameterDirection.Input, false,
+                0, 0, null, DataRowVersion.Current, bytBLOBData);
+                cmd.Parameters.Add(prm1);
+                cmd.Parameters.Add(prm2);
+
+                //Open connection, execute query, and close connection.
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Failed to insert Blob! " + ex.Message);
+            }
         }
 
         public void DeleteQuery(string tableName, List<string> filterParamList)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -43,7 +44,7 @@ namespace ProiectMIP
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
 
-                InitialDirectory = @"D:\",
+                InitialDirectory = @"E:\ProiectMIP\",
                 Title = "Browse Pictures",
 
                 CheckFileExists = true,
@@ -59,7 +60,7 @@ namespace ProiectMIP
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 //pictureBox1.Load(openFileDialog1.FileName);
-                imgInfo = new ImageInfo(openFileDialog1.SafeFileName, openFileDialog1.GetType().Name);
+                //imgInfo = new ImageInfo(openFileDialog1.SafeFileName, openFileDialog1.GetType().Name);
                 List<string> fields = new List<string>();
                 fields.Add("ImageName");
                 fields.Add("Blob");
@@ -122,9 +123,28 @@ namespace ProiectMIP
 
                 if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    pictureBox1.Load(openFileDialog1.FileName);
-                    imgInfo = new ImageInfo(openFileDialog1.SafeFileName, openFileDialog1.GetType().Name);
+                    //pictureBox1.Load(openFileDialog1.FileName);
+                    imgInfo = new ImageInfo(openFileDialog1.SafeFileName);
+                
 
+                    //var selItems = from ListItem li in picturesListBox.Items
+                    //               where li.Select == true
+                    //               select li.Text;
+
+                    List<string> listItems = new List<string>();
+                    for (int i = 0; i < picturesListBox.Items.Count; i++)
+                        listItems.Add(picturesListBox.Items[i].ToString());
+
+                    string fileName = openFileDialog1.FileName;
+
+                    string selectedItemName = fileName.Substring(fileName.LastIndexOf(@"\") + 1, fileName.LastIndexOf(@".") - fileName.LastIndexOf(@"\") - 1);
+
+                    var foundItem = listItems.Where(item => item == fileName);
+
+                    if (foundItem != null)
+                        System.Windows.Forms.MessageBox.Show("There is already an image with the same name i the list! ");
+                    else
+                        picturesListBox.Items.Add(imgInfo.getName());
                 }
             }
             catch (Exception ex)
@@ -145,10 +165,17 @@ namespace ProiectMIP
                 {
                     if(dt.Rows[i]["ImageName"].ToString() == imgName)
                     {
-                        Byte[] byteBLOBData = new Byte[0];
-                        byteBLOBData = (Byte[])(dt.Rows[i]["Blob"]);
-                        MemoryStream stmBLOBData = new MemoryStream(byteBLOBData);
-                        pictureBox1.Image = Image.FromStream(stmBLOBData);
+                        try
+                        {
+                            Byte[] byteBLOBData = new Byte[0];
+                            byteBLOBData = (Byte[])(dt.Rows[i]["Blob"]);
+                            MemoryStream stmBLOBData = new MemoryStream(byteBLOBData);
+                            pictureBox1.Image = Image.FromStream(stmBLOBData);
+                        }
+                        catch(Exception ex)
+                        {
+                            System.Windows.Forms.MessageBox.Show("Failed to load image into picture box! " + ex.Message);
+                        }
                     }
                 }
             }
